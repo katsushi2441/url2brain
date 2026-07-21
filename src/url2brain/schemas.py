@@ -80,6 +80,20 @@ class PostAixsnsRequest(BaseModel):
     confirm_post: bool = False
 
 
+class PostBluditRequest(BaseModel):
+    title: str = Field(min_length=1, max_length=200)
+    body_markdown: str = Field(min_length=1)
+    category: str = Field(default="url2pub", max_length=40)
+    tags: str = Field(default="url2pub", max_length=200)
+    confirm_post: bool = False
+
+
+class PostHatenaBlogRequest(BaseModel):
+    title: str = Field(min_length=1, max_length=200)
+    body_markdown: str = Field(min_length=1)
+    confirm_post: bool = False
+
+
 class PostResult(BaseModel):
     ok: bool
     status: str

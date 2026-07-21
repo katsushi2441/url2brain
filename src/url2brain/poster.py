@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import os
+import re
+import sys
 from typing import Any
 
 import requests
@@ -9,6 +11,53 @@ from ksnsposter.hatena_bookmark import add_bookmark, resolve_hatena_config
 
 # AIxSNS: aixecのkgrowth_jobs.py/vworkのpublish.pyと同じ投稿先(認証不要のJSON POST)。
 AIXSNS_API = os.environ.get("URL2BRAIN_AIXSNS_API", "https://aixec.exbridge.jp/api.php?path=posts")
+
+# Bludit(Kurageブログ): 所有者はkfreqai(kurage-advisory/kurage_blog.py)。kcbrain/kfxbrainと
+# 同じく一方向で利用する(循環依存を避ける、2026-07-17方針)。VWork Blog(git push前提)は
+# 2026-07-21にやめ、こちらのurl2pubカテゴリに統一。
+_KURAGE_ADVISORY_DIR = "/home/kojima/work/kfreqai/kurage-advisory"
+
+
+def _slugify(title: str) -> str:
+    slug = re.sub(r"[^a-zA-Z0-9]+", "-", title.strip().lower()).strip("-")
+    return slug[:60] or "post"
+
+
+def post_bludit(title: str, body_markdown: str, category: str = "url2pub", tags: str = "url2pub") -> dict[str, Any]:
+    if _KURAGE_ADVISORY_DIR not in sys.path:
+        sys.path.insert(0, _KURAGE_ADVISORY_DIR)
+    try:
+        import kurage_blog  # noqa: PLC0415
+    except ImportError as exc:
+        raise PostError(f"kurage_blog import failed: {exc}") from exc
+    try:
+        slug, permalink = kurage_blog.post_to_bludit(
+            title=title, slug=_slugify(title), body=body_markdown, tags=tags, category=category,
+        )
+    except Exception as exc:
+        raise PostError(f"Bludit post failed: {exc}") from exc
+    return {"ok": True, "status": "posted", "platform": "bludit", "slug": slug, "permalink": permalink}
+
+
+# はてなブログ: vwork/scripts/post_to_hatena.pyのsend_mail()をそのまま呼ぶ(SMTP送信のみ、
+# vworkのfrontmatterファイル/git状態には依存しない)。
+_VWORK_SCRIPTS_DIR = "/home/kojima/work/vwork/scripts"
+
+
+def post_hatena_blog(title: str, body_markdown: str) -> dict[str, Any]:
+    if _VWORK_SCRIPTS_DIR not in sys.path:
+        sys.path.insert(0, _VWORK_SCRIPTS_DIR)
+    try:
+        import post_to_hatena  # noqa: PLC0415
+    except ImportError as exc:
+        raise PostError(f"post_to_hatena import failed: {exc}") from exc
+    try:
+        post_to_hatena.send_mail(title, body_markdown)
+    except KeyError as exc:
+        raise PostError(f"missing SMTP/Hatena env var: {exc}") from exc
+    except Exception as exc:
+        raise PostError(f"Hatena Blog send failed: {exc}") from exc
+    return {"ok": True, "status": "posted", "platform": "hatena-blog", "title": title}
 
 
 class PostError(RuntimeError):

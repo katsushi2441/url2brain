@@ -22,7 +22,9 @@ from .schemas import (
     GenerateFromUrlRequest,
     GenerateFromUrlResult,
     PostAixsnsRequest,
+    PostBluditRequest,
     PostBlueskyRequest,
+    PostHatenaBlogRequest,
     PostHatenaBookmarkRequest,
     PostResult,
 )
@@ -180,3 +182,39 @@ def post_aixsns_endpoint(payload: PostAixsnsRequest) -> BrainResponse:
         raise HTTPException(502, str(exc)) from exc
     result = PostResult(ok=bool(raw.get("ok")), status=str(raw.get("status", "")), platform="aixsns", detail=raw)
     return _envelope("post/aixsns", "aixec", started, result)
+
+
+@app.post("/v1/post/bludit", response_model=BrainResponse, dependencies=[Depends(require_token)])
+def post_bludit_endpoint(payload: PostBluditRequest) -> BrainResponse:
+    started = time.monotonic()
+    if not payload.confirm_post:
+        result = PostResult(
+            ok=True, status="draft_ready", platform="bludit",
+            detail={"title": payload.title, "category": payload.category, "tags": payload.tags,
+                    "note": "confirm_post=true で実際に投稿します(ksnsposterの安全モデルに合わせて既定は下書きのみ)。"},
+        )
+        return _envelope("post/bludit", "kurage_blog", started, result)
+    try:
+        raw = poster.post_bludit(payload.title, payload.body_markdown, payload.category, payload.tags)
+    except PostError as exc:
+        raise HTTPException(502, str(exc)) from exc
+    result = PostResult(ok=bool(raw.get("ok")), status=str(raw.get("status", "")), platform="bludit", detail=raw)
+    return _envelope("post/bludit", "kurage_blog", started, result)
+
+
+@app.post("/v1/post/hatena-blog", response_model=BrainResponse, dependencies=[Depends(require_token)])
+def post_hatena_blog_endpoint(payload: PostHatenaBlogRequest) -> BrainResponse:
+    started = time.monotonic()
+    if not payload.confirm_post:
+        result = PostResult(
+            ok=True, status="draft_ready", platform="hatena-blog",
+            detail={"title": payload.title,
+                    "note": "confirm_post=true で実際に投稿します(ksnsposterの安全モデルに合わせて既定は下書きのみ)。"},
+        )
+        return _envelope("post/hatena-blog", "post_to_hatena", started, result)
+    try:
+        raw = poster.post_hatena_blog(payload.title, payload.body_markdown)
+    except PostError as exc:
+        raise HTTPException(502, str(exc)) from exc
+    result = PostResult(ok=bool(raw.get("ok")), status=str(raw.get("status", "")), platform="hatena-blog", detail=raw)
+    return _envelope("post/hatena-blog", "post_to_hatena", started, result)
