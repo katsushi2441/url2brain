@@ -27,6 +27,7 @@ class GenerateFromContentRequest(BaseModel):
     source: AnalyzeUrlResult
     language: str = Field(default="ja", pattern="^(ja|en)$")
     tone: str = Field(default="neutral", max_length=40)
+    provider: str = Field(default="", pattern="^(|ollama|deepseek)$")
 
 
 class AnnouncementResult(BaseModel):
@@ -44,6 +45,7 @@ class GenerateFromUrlRequest(BaseModel):
     depth: str = Field(default="full", pattern="^(basic|full)$")
     language: str = Field(default="ja", pattern="^(ja|en)$")
     tone: str = Field(default="neutral", max_length=40)
+    provider: str = Field(default="", pattern="^(|ollama|deepseek)$")
 
 
 class GenerateFromUrlResult(BaseModel):

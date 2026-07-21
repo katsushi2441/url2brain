@@ -90,14 +90,22 @@ class ArticleBrain:
     def model(self) -> str:
         return self.config.active_model
 
-    def generate_json(self, prompt: str, max_tokens: int = 2200) -> dict[str, Any]:
+    def model_for(self, provider: str = "") -> str:
+        provider = provider or self.config.llm_provider
+        return self.config.deepseek_model if provider == "deepseek" else self.config.ollama_model
+
+    def generate_json(self, prompt: str, max_tokens: int = 2200, provider: str = "") -> dict[str, Any]:
+        # provider省略時はconfig既定(url2pub WebアプリはローカルGemma4のまま)。x402ゲートウェイは
+        # 有料コールに対して常にprovider="deepseek"を注入し、ローカルGPUをKurage本番系と
+        # 競合させずに済ませる(2026-07-21方針)。
+        provider = provider or self.config.llm_provider
         if len(prompt) > self.config.max_input_chars:
             raise BrainError(f"input exceeds {self.config.max_input_chars} characters")
-        if self.config.llm_provider == "deepseek":
+        if provider == "deepseek":
             content = self._chat_deepseek(prompt, max_tokens)
             return extract_json_object(content)
-        if self.config.llm_provider != "ollama":
-            raise BrainError("URL2BRAIN_LLM_PROVIDER must be ollama or deepseek")
+        if provider != "ollama":
+            raise BrainError("provider must be ollama or deepseek")
         payload = {
             "model": self.config.ollama_model,
             "prompt": prompt,

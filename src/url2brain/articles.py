@@ -18,7 +18,9 @@ def _evidence_block(source: AnalyzeUrlResult) -> str:
     )
 
 
-def generate_announcement(brain: ArticleBrain, source: AnalyzeUrlResult, language: str, tone: str) -> AnnouncementResult:
+def generate_announcement(
+    brain: ArticleBrain, source: AnalyzeUrlResult, language: str, tone: str, provider: str = ""
+) -> AnnouncementResult:
     lang_name = _LANGUAGE_NAME.get(language, "Japanese")
     prompt = (
         "You are writing a short social-media announcement post introducing the page below to readers. "
@@ -28,14 +30,16 @@ def generate_announcement(brain: ArticleBrain, source: AnalyzeUrlResult, languag
         f"{_evidence_block(source)}\n\n"
         'Return exactly one JSON object: {"text": "..."}'
     )
-    result = brain.generate_json(prompt, max_tokens=400)
+    result = brain.generate_json(prompt, max_tokens=400, provider=provider)
     text = str(result.get("text") or "").strip()
     if not text:
         raise BrainError("model returned an empty announcement text")
     return AnnouncementResult(text=text, char_count=len(text))
 
 
-def generate_blog_article(brain: ArticleBrain, source: AnalyzeUrlResult, language: str, tone: str) -> BlogArticleResult:
+def generate_blog_article(
+    brain: ArticleBrain, source: AnalyzeUrlResult, language: str, tone: str, provider: str = ""
+) -> BlogArticleResult:
     lang_name = _LANGUAGE_NAME.get(language, "Japanese")
     prompt = (
         "You are writing a short blog article introducing the page below to readers who have not seen it. "
@@ -46,7 +50,7 @@ def generate_blog_article(brain: ArticleBrain, source: AnalyzeUrlResult, languag
         f"{_evidence_block(source)}\n\n"
         'Return exactly one JSON object: {"title": "...", "body_markdown": "..."}'
     )
-    result = brain.generate_json(prompt, max_tokens=1800)
+    result = brain.generate_json(prompt, max_tokens=1800, provider=provider)
     title = str(result.get("title") or "").strip()
     body = str(result.get("body_markdown") or "").strip()
     if not title or not body:

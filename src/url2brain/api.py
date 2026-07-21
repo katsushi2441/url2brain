@@ -100,37 +100,39 @@ def analyze_url(payload: AnalyzeUrlRequest) -> BrainResponse:
 def generate_announcement_endpoint(payload: GenerateFromContentRequest) -> BrainResponse:
     started = time.monotonic()
     try:
-        result = generate_announcement(brain, payload.source, payload.language, payload.tone)
+        result = generate_announcement(brain, payload.source, payload.language, payload.tone, payload.provider)
     except BrainError as exc:
         raise HTTPException(502, str(exc)) from exc
-    return _envelope("generate/announcement", brain.model, started, result)
+    return _envelope("generate/announcement", brain.model_for(payload.provider), started, result)
 
 
 @app.post("/v1/generate/blog-article", response_model=BrainResponse, dependencies=[Depends(require_token)])
 def generate_blog_article_endpoint(payload: GenerateFromContentRequest) -> BrainResponse:
     started = time.monotonic()
     try:
-        result = generate_blog_article(brain, payload.source, payload.language, payload.tone)
+        result = generate_blog_article(brain, payload.source, payload.language, payload.tone, payload.provider)
     except BrainError as exc:
         raise HTTPException(502, str(exc)) from exc
-    return _envelope("generate/blog-article", brain.model, started, result)
+    return _envelope("generate/blog-article", brain.model_for(payload.provider), started, result)
 
 
 @app.post("/v1/generate/from-url", response_model=BrainResponse, dependencies=[Depends(require_token)])
 def generate_from_url(payload: GenerateFromUrlRequest) -> BrainResponse:
-    """「URL入れるだけ」フロー用の合成エンドポイント: 解析→告知文→ブログ記事を1コールで返す。"""
+    """「URL入れるだけ」フロー用の合成エンドポイント: 解析→告知文→ブログ記事を1コールで返す。
+    provider省略時はconfig既定(url2pub Webアプリ=ローカルGemma4)。x402ゲートウェイは
+    provider="deepseek"を注入して有料コールをDeepSeekへ流す(ローカルGPUを本番系と競合させない)。"""
     started = time.monotonic()
     try:
         source = fetcher.analyze(str(payload.url), payload.depth)
     except FetchError as exc:
         raise HTTPException(502, f"fetch failed: {exc}") from exc
     try:
-        announcement = generate_announcement(brain, source, payload.language, payload.tone)
-        blog_article = generate_blog_article(brain, source, payload.language, payload.tone)
+        announcement = generate_announcement(brain, source, payload.language, payload.tone, payload.provider)
+        blog_article = generate_blog_article(brain, source, payload.language, payload.tone, payload.provider)
     except BrainError as exc:
         raise HTTPException(502, str(exc)) from exc
     result = GenerateFromUrlResult(source=source, announcement=announcement, blog_article=blog_article)
-    return _envelope("generate/from-url", brain.model, started, result)
+    return _envelope("generate/from-url", brain.model_for(payload.provider), started, result)
 
 
 # 投稿エンドポイント群。ksnsposter(Bluesky/はてなブックマーク)とAIxSNS(aixec)を薄くラップする。
