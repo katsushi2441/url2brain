@@ -9,6 +9,7 @@ EnvironmentFile=/home/kojima/work/url2brain/.env
 # 投稿連携の認証情報(Bluesky/はてなブックマーク、SMTP/はてなブログ宛先)。
 # ksnsposter/aixecが所有する認証情報を一方向で読み込む(重複保存しない)。
 EnvironmentFile=-/home/kojima/work/ksnsposter/.env
+EnvironmentFile=-/home/kojima/.config/ksnsposter/hatena.env
 EnvironmentFile=-/home/kojima/work/aixec/.env
 ExecStart=/home/kojima/work/url2brain/.venv/bin/uvicorn url2brain.api:app --app-dir src --host 0.0.0.0 --port 18332
 Restart=always
