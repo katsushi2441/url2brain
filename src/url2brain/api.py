@@ -13,12 +13,18 @@ from .articles import generate_announcement, generate_blog_article
 from .config import settings
 from .fetcher import FetchError, UrlFetcher
 from .llm import ArticleBrain, BrainError
+from . import poster
+from .poster import PostError
 from .schemas import (
     AnalyzeUrlRequest,
     BrainResponse,
     GenerateFromContentRequest,
     GenerateFromUrlRequest,
     GenerateFromUrlResult,
+    PostAixsnsRequest,
+    PostBlueskyRequest,
+    PostHatenaBookmarkRequest,
+    PostResult,
 )
 
 app = FastAPI(
@@ -123,3 +129,54 @@ def generate_from_url(payload: GenerateFromUrlRequest) -> BrainResponse:
         raise HTTPException(502, str(exc)) from exc
     result = GenerateFromUrlResult(source=source, announcement=announcement, blog_article=blog_article)
     return _envelope("generate/from-url", brain.model, started, result)
+
+
+# 投稿エンドポイント群。ksnsposter(Bluesky/はてなブックマーク)とAIxSNS(aixec)を薄くラップする。
+# url2brainは投稿先を増やさない・ロジックを書き換えない(AGENTS.md)。安全モデルはksnsposterに
+# 合わせ、confirm_post=false(既定)なら実際には投稿せずdraft_readyのみ返す。
+
+@app.post("/v1/post/bluesky", response_model=BrainResponse, dependencies=[Depends(require_token)])
+def post_bluesky_endpoint(payload: PostBlueskyRequest) -> BrainResponse:
+    started = time.monotonic()
+    try:
+        raw = poster.post_bluesky(payload.text, payload.url, payload.confirm_post)
+    except PostError as exc:
+        raise HTTPException(502, str(exc)) from exc
+    result = PostResult(ok=bool(raw.get("ok")), status=str(raw.get("status", "")), platform="bluesky", detail=raw)
+    return _envelope("post/bluesky", "ksnsposter", started, result)
+
+
+@app.post("/v1/post/hatena-bookmark", response_model=BrainResponse, dependencies=[Depends(require_token)])
+def post_hatena_bookmark_endpoint(payload: PostHatenaBookmarkRequest) -> BrainResponse:
+    started = time.monotonic()
+    if not payload.confirm_post:
+        result = PostResult(
+            ok=True, status="draft_ready", platform="hatena-bookmark",
+            detail={"url": str(payload.url), "comment": payload.comment, "tags": payload.tags,
+                    "note": "confirm_post=true で実際に投稿します(ksnsposterの安全モデルに合わせて既定は下書きのみ)。"},
+        )
+        return _envelope("post/hatena-bookmark", "ksnsposter", started, result)
+    try:
+        raw = poster.post_hatena_bookmark(str(payload.url), payload.comment, payload.tags, payload.private)
+    except PostError as exc:
+        raise HTTPException(502, str(exc)) from exc
+    result = PostResult(ok=bool(raw.get("ok")), status=str(raw.get("status", "")), platform="hatena-bookmark", detail=raw)
+    return _envelope("post/hatena-bookmark", "ksnsposter", started, result)
+
+
+@app.post("/v1/post/aixsns", response_model=BrainResponse, dependencies=[Depends(require_token)])
+def post_aixsns_endpoint(payload: PostAixsnsRequest) -> BrainResponse:
+    started = time.monotonic()
+    if not payload.confirm_post:
+        result = PostResult(
+            ok=True, status="draft_ready", platform="aixsns",
+            detail={"content": payload.content, "author": payload.author,
+                    "note": "confirm_post=true で実際に投稿します(ksnsposterの安全モデルに合わせて既定は下書きのみ)。"},
+        )
+        return _envelope("post/aixsns", "aixec", started, result)
+    try:
+        raw = poster.post_aixsns(payload.content, payload.author)
+    except PostError as exc:
+        raise HTTPException(502, str(exc)) from exc
+    result = PostResult(ok=bool(raw.get("ok")), status=str(raw.get("status", "")), platform="aixsns", detail=raw)
+    return _envelope("post/aixsns", "aixec", started, result)

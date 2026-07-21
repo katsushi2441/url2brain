@@ -58,3 +58,30 @@ class BrainResponse(BaseModel):
     model: str
     latency_ms: int
     result: dict[str, Any]
+
+
+class PostBlueskyRequest(BaseModel):
+    text: str = Field(min_length=1, max_length=280)
+    url: str = ""
+    confirm_post: bool = False
+
+
+class PostHatenaBookmarkRequest(BaseModel):
+    url: HttpUrl
+    comment: str = Field(default="", max_length=100)
+    tags: list[str] = Field(default_factory=list)
+    private: bool = False
+    confirm_post: bool = False
+
+
+class PostAixsnsRequest(BaseModel):
+    content: str = Field(min_length=1, max_length=2000)
+    author: str = Field(default="url2brain", max_length=40)
+    confirm_post: bool = False
+
+
+class PostResult(BaseModel):
+    ok: bool
+    status: str
+    platform: str
+    detail: dict[str, Any] = Field(default_factory=dict)
