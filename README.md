@@ -4,6 +4,10 @@ URL2AI Publisherの「頭脳」。URLを1つ渡すと、内容を解析し、SNS
 
 Web版(url2ai.exbridge.jp、人間向け)とOSS版(url2pub、AIエージェント向けx402 API)は**同じurl2brainを共用**します。ブレインを1つ改善すれば、両方が同時に賢くなります。
 
+- 製品LP: https://url2brain.exbridge.jp/
+- 日本語LP: https://url2brain.exbridge.jp/url2brain.html
+- 無料Webアプリ: https://url2ai.exbridge.jp/
+
 ## エンドポイント
 
 - `POST /v1/analyze/url` — URLを取得・構造化抽出(url2aiのoss2api `/url/analyze`を内部利用。二重スクレイパーは持たない)

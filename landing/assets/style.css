@@ -1,0 +1,134 @@
+:root {
+  --paper: #f7fbfa;
+  --surface: #ffffff;
+  --ink: #152c36;
+  --muted: #5b7078;
+  --line: #cfe3e1;
+  --accent: #087f78;
+  --accent-soft: #e2f5f1;
+  --navy: #173f5f;
+  --coral: #d9654b;
+  --shadow: 0 16px 38px rgba(18, 67, 70, .09);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 12% 2%, rgba(45, 212, 191, .13), transparent 28rem),
+    linear-gradient(180deg, #fbfdf8 0%, var(--paper) 56%, #eef7f5 100%);
+  font-family: "Zen Kaku Gothic New", sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+}
+a { color: var(--accent); }
+header {
+  min-height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 10px clamp(20px, 5vw, 72px);
+  border-bottom: 1px solid rgba(8, 127, 120, .15);
+  background: rgba(255, 255, 255, .86);
+  backdrop-filter: blur(12px);
+}
+.brand { font-weight: 900; letter-spacing: -.02em; }
+.brand small { display: block; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .06em; }
+.nav { display: flex; gap: 8px; flex-wrap: wrap; }
+.wrap { width: min(1120px, calc(100% - 32px)); margin: 0 auto; }
+.hero {
+  display: grid;
+  grid-template-columns: 1.5fr .65fr;
+  align-items: center;
+  gap: clamp(24px, 6vw, 72px);
+  padding: clamp(54px, 8vw, 94px) 0 48px;
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+h1 { margin: 16px 0 18px; font-size: clamp(36px, 5.5vw, 66px); line-height: 1.03; letter-spacing: -.055em; }
+h1 em { color: var(--accent); font-style: normal; }
+.lead { max-width: 760px; margin: 0; color: #3d555e; font-size: clamp(16px, 1.6vw, 19px); }
+.hero img {
+  display: block;
+  width: min(100%, 260px);
+  margin: auto;
+  filter: drop-shadow(0 22px 22px rgba(8, 127, 120, .17));
+}
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 9px 15px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+}
+.btn.primary { border-color: var(--accent); background: var(--accent); color: #fff; }
+section { padding: 38px 0; }
+h2 { margin: 0 0 8px; font-size: clamp(24px, 3vw, 34px); letter-spacing: -.035em; }
+.sub { margin: 0 0 22px; color: var(--muted); }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.card {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .93);
+  box-shadow: var(--shadow);
+}
+.card h3 { margin: 10px 0 7px; font-size: 18px; line-height: 1.35; }
+.card p { margin: 0; color: var(--muted); }
+.tag {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .06em;
+}
+.tag.pending { background: #fff3dd; color: #9a5a13; }
+.paths {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #102f38;
+  color: #e9fffb;
+  box-shadow: var(--shadow);
+}
+table { width: 100%; border-collapse: collapse; min-width: 720px; }
+th, td { padding: 11px 14px; border-bottom: 1px solid rgba(255,255,255,.12); text-align: left; font-size: 13px; }
+th { color: #8ee8dc; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+code { font-family: "IBM Plex Mono", monospace; font-size: .9em; overflow-wrap: anywhere; }
+.notice {
+  padding: 16px 18px;
+  border-left: 4px solid var(--coral);
+  border-radius: 12px;
+  background: #fff7f2;
+  color: #75402f;
+}
+footer { margin-top: 32px; padding: 28px 0 38px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+@media (max-width: 760px) {
+  .hero { grid-template-columns: 1fr; padding-top: 42px; }
+  .hero img { width: 170px; }
+  .grid { grid-template-columns: 1fr; }
+  header { align-items: flex-start; }
+}

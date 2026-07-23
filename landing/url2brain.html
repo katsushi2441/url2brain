@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kurage URL2AI Brain — URL解析・記事生成・実投稿API</title>
+<meta name="description" content="URL解析、告知文・記事生成、5媒体への実投稿を提供する9つの知能API。OSSとして自前運用でき、DeepSeekを使うx402従量課金APIとしても利用できます。">
+<link rel="canonical" href="https://url2brain.exbridge.jp/url2brain.html">
+<link rel="alternate" hreflang="en" href="https://url2brain.exbridge.jp/">
+<meta property="og:title" content="Kurage URL2AI Brain">
+<meta property="og:description" content="OSSの本体と、DeepSeekで動く従量課金の頭脳。URL解析・生成・投稿の9スキル。">
+<meta property="og:url" content="https://url2brain.exbridge.jp/url2brain.html">
+<meta property="og:image" content="https://url2brain.exbridge.jp/assets/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header>
+  <div class="brand">Kurage URL2AI Brain<small>url2brain · URL解析・コンテンツ生成・投稿API</small></div>
+  <nav class="nav">
+    <a class="btn" href="index.html">English</a>
+    <a class="btn primary" href="https://url2ai.exbridge.jp/url2pub.html">URL2Pubを試す</a>
+  </nav>
+</header>
+<main class="wrap">
+  <div class="hero">
+    <div>
+      <span class="eyebrow">9スキル · DEEPSEEK · X402 · OSS</span>
+      <h1>URLを渡す。<em>解析、生成、配信まで返す。</em></h1>
+      <p class="lead">url2brainは、Kurage URL2AI PublisherとOSS版url2pubが共有する知能です。
+      公開URLを解析し、告知文と長文記事を生成し、5つの実在メディアへ投稿できます。
+      OSSは無料で自前運用でき、ホスト版はx402で1回$1.00の従量課金です。</p>
+      <div class="actions">
+        <a class="btn primary" href="https://github.com/katsushi2441/url2brain">OSSを見る</a>
+        <a class="btn" href="https://bittensorman.xyz/.well-known/x402.json">x402ディスカバリ</a>
+        <a class="btn" href="https://x402.bankr.bot/0x444fadbd6e1fed0cfbf7613b6c9f91b9021eecbd/url2brain">Bankrリスティング</a>
+      </div>
+    </div>
+    <img src="assets/icon.png" alt="Kurage URL2AI Brainアイコン">
+  </div>
+
+  <section>
+    <h2>1つの頭脳、2つの本体</h2>
+    <p class="sub">url2brainを改善すると、人間向けWEB版とAIエージェント向けOSS版の両方が改善されます。</p>
+    <div class="grid">
+      <article class="card"><span class="tag">無料WEBアプリ</span><h3>Kurage URL2AI Publisher</h3><p>Xでログインし、URLを貼り付け、画面から5媒体へ配信できます。</p></article>
+      <article class="card"><span class="tag">OSS本体</span><h3>url2pub</h3><p>認証、画面、履歴、URLAI報酬をOSS本体が担当。頭脳は差し替え可能です。</p></article>
+      <article class="card"><span class="tag">従量課金の頭脳</span><h3>url2brain</h3><p>有料生成はDeepSeekで実行。利用者のSNS認証情報は持たず、管理された投稿先だけを使用します。</p></article>
+    </div>
+  </section>
+
+  <section>
+    <h2>9つの有料スキル</h2>
+    <p class="sub">ホスト版は全パス1回$1.00、Base上のUSDCで支払います。</p>
+    <div class="paths">
+      <table>
+        <thead><tr><th>種類</th><th>パス</th><th>結果</th></tr></thead>
+        <tbody>
+          <tr><td>解析</td><td><code>/url2brain/analyze/url</code></td><td>URLの構造化データ</td></tr>
+          <tr><td>生成</td><td><code>/generate/announcement</code></td><td>短い告知文</td></tr>
+          <tr><td>生成</td><td><code>/generate/blog-article</code></td><td>長文記事</td></tr>
+          <tr><td>生成</td><td><code>/generate/from-url</code></td><td>解析＋告知文＋記事</td></tr>
+          <tr><td>投稿</td><td><code>/post/bluesky</code></td><td>Bluesky投稿</td></tr>
+          <tr><td>投稿</td><td><code>/post/hatena-bookmark</code></td><td>はてなブックマーク</td></tr>
+          <tr><td>投稿</td><td><code>/post/aixsns</code></td><td>AIxSNS投稿</td></tr>
+          <tr><td>投稿</td><td><code>/post/bludit</code></td><td>Kurageブログ記事</td></tr>
+          <tr><td>投稿</td><td><code>/post/hatena-blog</code></td><td>はてなブログ記事</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>利用経路と公開状況</h2>
+    <div class="grid">
+      <article class="card"><span class="tag">公開中</span><h3>Coinbase CDP対応の直接x402</h3><p><code>bittensorman.xyz/.well-known/x402.json</code>から検出でき、支払い自体が指定処理の許可になります。</p></article>
+      <article class="card"><span class="tag">公開中</span><h3>Bankr x402</h3><p>AIエージェントがウォレットから1回$1.00で、同じ9スキルを利用できます。</p></article>
+      <article class="card"><span class="tag pending">RapidAPI・準備中</span><h3>Studio登録済み、一般公開前</h3><p>公開プロフィールは現在Published APIs 0件です。公開後にカード決済URLを追加します。</p></article>
+    </div>
+  </section>
+
+  <p class="notice"><strong>投稿APIは実際に外部へ投稿します。</strong> 有料の<code>/post/*</code>は
+  Kurage/EXBRIDGEが管理する投稿先へ配信します。x402支払いを明示的な投稿許可として扱い、
+  利用者が別アカウントや任意の人格へ差し替えることはできません。</p>
+</main>
+<footer><div class="wrap">Kurage URL2AI Brain · <a href="https://exbridge.jp/">株式会社エクスブリッジ</a> · <a href="https://url2ai.exbridge.jp/url2pub.html">URL2Pub</a> · <a href="https://github.com/katsushi2441/url2brain">GitHub</a></div></footer>
+</body>
+</html>
