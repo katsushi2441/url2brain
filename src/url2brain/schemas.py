@@ -65,6 +65,7 @@ class BrainResponse(BaseModel):
 class PostBlueskyRequest(BaseModel):
     text: str = Field(min_length=1, max_length=280)
     url: str = ""
+    persona: str = Field(default="", pattern="^(|kurage|bittensorman)$")
     confirm_post: bool = False
 
 
@@ -79,6 +80,7 @@ class PostHatenaBookmarkRequest(BaseModel):
 class PostAixsnsRequest(BaseModel):
     content: str = Field(min_length=1, max_length=2000)
     author: str = Field(default="url2brain", max_length=40)
+    persona: str = Field(default="", pattern="^(|kurage|bittensorman)$")
     confirm_post: bool = False
 
 
@@ -87,12 +89,14 @@ class PostBluditRequest(BaseModel):
     body_markdown: str = Field(min_length=1)
     category: str = Field(default="url2pub", max_length=40)
     tags: str = Field(default="url2pub", max_length=200)
+    persona: str = Field(default="", pattern="^(|kurage|bittensorman)$")
     confirm_post: bool = False
 
 
 class PostHatenaBlogRequest(BaseModel):
     title: str = Field(min_length=1, max_length=200)
     body_markdown: str = Field(min_length=1)
+    persona: str = Field(default="", pattern="^(|kurage|bittensorman)$")
     confirm_post: bool = False
 
 
